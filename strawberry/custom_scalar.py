@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, Mapping, Optional, TypeVar, Union
+from typing import Callable, Mapping, Optional, TypeVar, Union, overload
 
 from graphql import GraphQLScalarType
 
@@ -71,8 +71,9 @@ def _process_scalar(
 T = TypeVar("T")
 
 
+@overload
 def scalar(
-    cls: T = None,
+    cls: T,
     *,
     name: str = None,
     description: str = None,
@@ -80,6 +81,30 @@ def scalar(
     parse_value: Optional[Callable] = None,
     parse_literal: Optional[Callable] = None
 ) -> T:
+    ...
+
+
+@overload
+def scalar(
+    *,
+    name: str = None,
+    description: str = None,
+    serialize: Callable = identity,
+    parse_value: Optional[Callable] = None,
+    parse_literal: Optional[Callable] = None
+) -> Callable[[T], T]:
+    ...
+
+
+def scalar(
+    cls=None,
+    *,
+    name=None,
+    description=None,
+    serialize=identity,
+    parse_value=None,
+    parse_literal=None
+):
     """Annotates a class or type as a GraphQL custom scalar.
 
     Example usages:
