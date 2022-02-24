@@ -1086,6 +1086,17 @@ pyyaml = "*"
 regex = "*"
 
 [[package]]
+name = "pytest-snapshot"
+version = "0.8.1"
+description = "A plugin for snapshot testing with pytest."
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+pytest = ">=3.0.0"
+
+[[package]]
 name = "pytest-xprocess"
 version = "0.18.1"
 description = "A pytest plugin for managing processes across test runs."
@@ -1574,7 +1585,7 @@ sanic = ["sanic"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "209a3794081196c183b5c318e820dd06e4bce72ccefabba5b5f08ebf350382c3"
+content-hash = "00887c95e5d8889b31dbeea527fe6d39b84e75e33b6aefd9588dacf229cfd4b7"
 
 [metadata.files]
 aiofiles = [
@@ -2354,6 +2365,10 @@ pytest-mock = [
 pytest-mypy-plugins = [
     {file = "pytest-mypy-plugins-1.9.3.tar.gz", hash = "sha256:c2c6590ee68fd634013fdd0b47a5c83df300afd8b38d5aabd3b29e21b7907221"},
     {file = "pytest_mypy_plugins-1.9.3-py3-none-any.whl", hash = "sha256:10e60bd59a2b043ebda70f9a0ad1a8c9324ce6d0b46b93cae3b1172df2d4d81b"},
+]
+pytest-snapshot = [
+    {file = "pytest-snapshot-0.8.1.tar.gz", hash = "sha256:0f8872d56bc3ceacb465967072b059a36714898a37c9eb1c75cd4054110106f2"},
+    {file = "pytest_snapshot-0.8.1-py3-none-any.whl", hash = "sha256:ccb72c8e40dd1ec96b40caf0d328a9e9124b91d6a06204ad47d67403d83a4fd2"},
 ]
 pytest-xprocess = [
     {file = "pytest-xprocess-0.18.1.tar.gz", hash = "sha256:fd9f30ed1584b5833bc34494748adf0fb9de3ca7bacc4e88ad71989c21cba266"},
