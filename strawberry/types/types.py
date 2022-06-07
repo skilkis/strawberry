@@ -14,6 +14,8 @@ from typing import (
     Union,
 )
 
+from graphql import GraphQLAbstractType
+
 from strawberry.type import StrawberryType, StrawberryTypeVar
 from strawberry.utils.typing import is_generic as is_type_generic
 
@@ -35,6 +37,9 @@ class TypeDefinition(StrawberryType):
     extend: bool
     directives: Optional[Sequence[object]]
     is_type_of: Optional[Callable[[Any, GraphQLResolveInfo], bool]]
+    resolve_type: Optional[
+        Callable[[Any, GraphQLResolveInfo, GraphQLAbstractType], str]
+    ]
 
     _fields: List["StrawberryField"]
 
@@ -90,6 +95,7 @@ class TypeDefinition(StrawberryType):
             description=self.description,
             extend=self.extend,
             is_type_of=self.is_type_of,
+            resolve_type=self.resolve_type,
             _fields=fields,
             concrete_of=self,
             type_var_map=type_var_map,

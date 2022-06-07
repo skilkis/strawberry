@@ -133,6 +133,7 @@ def _process_type(
     interfaces = _get_interfaces(cls)
     fields = _get_fields(cls)
     is_type_of = getattr(cls, "is_type_of", None)
+    resolve_type = getattr(cls, "resolve_type", None)
 
     cls._type_definition = TypeDefinition(
         name=name,
@@ -145,6 +146,7 @@ def _process_type(
         extend=extend,
         _fields=fields,
         is_type_of=is_type_of,
+        resolve_type=resolve_type,
     )
 
     # dataclasses removes attributes from the class here:

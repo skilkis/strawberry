@@ -4,6 +4,7 @@ import dataclasses
 import sys
 from typing import (
     Any,
+    Awaitable,
     Callable,
     Dict,
     List,
@@ -35,6 +36,7 @@ from graphql import (
     GraphQLUnionType,
     Undefined,
     ValueNode,
+    default_type_resolver,
 )
 from graphql.language.directive_locations import DirectiveLocation
 
@@ -342,6 +344,20 @@ class GraphQLCoreConverter:
             assert isinstance(graphql_interface, GraphQLInterfaceType)  # For mypy
             return graphql_interface
 
+        def _get_resolve_type():
+            if interface.resolve_type:
+                return interface.resolve_type
+
+            def resolve_type(
+                obj: Any, info: GraphQLResolveInfo, abstract_type: GraphQLInterfaceType
+            ) -> Union[Awaitable[Optional[str]], str, None]:
+                if isinstance(obj, interface.origin):
+                    return obj._type_definition.name
+                else:
+                    return default_type_resolver(obj, info, abstract_type)
+
+            return resolve_type
+
         graphql_interface = GraphQLInterfaceType(
             name=interface_name,
             fields=lambda: self.get_graphql_fields(interface),
@@ -350,6 +366,7 @@ class GraphQLCoreConverter:
             extensions={
                 GraphQLCoreConverter.DEFINITION_BACKREF: interface,
             },
+            resolve_type=_get_resolve_type(),
         )
 
         self.type_map[interface_name] = ConcreteType(
@@ -630,25 +647,3 @@ class GraphQLCoreConverter:
         )
 
         return graphql_union
-
-    def _get_is_type_of(
-        self,
-        object_type: TypeDefinition,
-    ) -> Optional[Callable[[Any, GraphQLResolveInfo], bool]]:
-        if object_type.is_type_of:
-            return object_type.is_type_of
-
-        if object_type.interfaces:
-
-            def is_type_of(obj: Any, _info: GraphQLResolveInfo) -> bool:
-                if object_type.concrete_of and (
-                    hasattr(obj, "_type_definition")
-                    and obj._type_definition.origin is object_type.concrete_of.origin
-                ):
-                    return True
-
-                return isinstance(obj, object_type.origin)
-
-            return is_type_of
-
-        return None
