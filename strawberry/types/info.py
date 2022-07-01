@@ -1,4 +1,3 @@
-import dataclasses
 import warnings
 from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
 
@@ -21,10 +20,18 @@ ContextType = TypeVar("ContextType")
 RootValueType = TypeVar("RootValueType")
 
 
-@dataclasses.dataclass
 class Info(Generic[ContextType, RootValueType]):
+
+    __slots__ = "_raw_info", "_field"
+
     _raw_info: GraphQLResolveInfo
     _field: "StrawberryField"
+
+    def __init__(
+        self, _raw_info: GraphQLResolveInfo, _field: "StrawberryField"
+    ) -> None:
+        self._raw_info = _raw_info
+        self._field = _field
 
     @property
     def field_name(self) -> str:
