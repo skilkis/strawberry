@@ -501,7 +501,7 @@ def is_dataclasses_field_or_strawberry_field(expr: Expression) -> bool:
 
 
 def _collect_field_args(
-    ctx: ClassDefContext, expr: Expression
+    expr: Expression, ctx: ClassDefContext
 ) -> Tuple[bool, Dict[str, Expression]]:
     """Returns a tuple where the first value represents whether or not
     the expression is a call to dataclass.field and the second is a
@@ -515,12 +515,10 @@ def _collect_field_args(
 
         for name, arg in zip(expr.arg_names, expr.args):
             if name is None:
-                ctx.api.fail(
-                    '"field()" or "mutation()" only takes keyword arguments', expr
-                )
-                return False, {}
-
-            args[name] = arg
+                context = Context(line=expr.line, column=expr.column)
+                ctx.api.fail("field only accepts keyword arguments", context)
+            else:
+                args[name] = arg
         return True, args
 
     return False, {}
@@ -723,7 +721,7 @@ class CustomDataclassTransformer:
                 is_init_var = True
                 node.type = node_type.args[0]
 
-            has_field_call, field_args = _collect_field_args(ctx, stmt.rvalue)
+            has_field_call, field_args = _collect_field_args(stmt.rvalue, ctx)
 
             is_in_init_param = field_args.get("init")
             if is_in_init_param is None:
