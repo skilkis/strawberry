@@ -336,3 +336,26 @@ def test_parameter_hash_collision():
 
     assert len(parameters_map) == 2
     assert len(parameters_set) == 2
+
+
+def test_resolver_annotations():
+    """Ensure only non-reserved annotations are returned."""
+
+    def resolver_annotated_info(
+        self, root, foo: str, bar: float, info: str, strawberry_info: Info
+    ) -> str:
+        return "Hello world"
+
+    resolver = StrawberryResolver(resolver_annotated_info)
+
+    expected_annotations = {"foo": str, "bar": float, "info": str, "return": str}
+    assert resolver.annotations == expected_annotations
+
+    # Sanity-check to ensure StrawberryArguments return the same annotations
+    assert {
+        **{
+            arg.python_name: arg.type_annotation.resolve()  # type: ignore
+            for arg in resolver.arguments
+        },
+        "return": str,
+    }
