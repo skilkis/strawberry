@@ -100,13 +100,14 @@ class ReservedType(NamedTuple):
         for parameter in parameters:
             annotation = parameter.annotation
             try:
-                resolved_annotation = _eval_type(
-                    ForwardRef(annotation)
-                    if isinstance(annotation, str)
-                    else annotation,
-                    resolver._namespace,
-                    None,
-                )
+                if isinstance(annotation, str):
+                    resolved_annotation = _eval_type(
+                        ForwardRef(annotation),
+                        resolver._namespace,
+                        None,
+                    )
+                else:
+                    resolved_annotation = annotation
                 resolver._resolved_annotations[parameter] = resolved_annotation
             except NameError:
                 # Type-annotation could not be resolved
